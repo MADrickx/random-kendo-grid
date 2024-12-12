@@ -1,6 +1,7 @@
 # KendoGridTest
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
+The purpose of this project is to test the kendo-angular-grid component to be able to determine if it is leaking memory or not.
 
 ## Development server
 
