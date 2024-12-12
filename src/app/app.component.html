@@ -1,0 +1,8 @@
+<app-random-kendo-grid
+  *ngIf="showGrid"
+  (destroy)="onGridDestroy()"
+></app-random-kendo-grid>
+
+<div *ngIf="!showGrid" class="grid-closed">
+  <button kendoButton (click)="showGrid = true">Create Grid</button>
+</div>

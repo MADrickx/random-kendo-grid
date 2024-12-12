@@ -1,0 +1,229 @@
+<div class="button-container">
+  <button kendoButton (click)="recreateGrid()" class="recreate-button">
+    Recreate Grid
+  </button>
+  <button kendoButton (click)="closeGrid()" class="close-button">
+    Close Grid
+  </button>
+</div>
+
+<kendo-grid
+  *ngIf="showGrid"
+  #folderGridRef
+  [data]="gridView"
+  [scrollable]="'virtual'"
+  [height]="heightWindow"
+  [rowHeight]="rowHeight"
+  [skip]="skip"
+  [pageSize]="pageSize"
+  [reorderable]="true"
+  [resizable]="true"
+  [rowClass]="rowCallBack"
+  [rowSelected]="isRowSelected"
+  [selectable]="selectableSettings"
+  [sort]="sort"
+  [sortable]="sortSettings"
+  (pageChange)="pageChange($event)"
+  (selectionChange)="onSelectionChange($event)"
+  (sortChange)="sortChange($event)"
+  id="folder-grid"
+>
+  <ng-template kendoGridToolbarTemplate>
+    <div class="d-flex justify-content-between w-100">
+      <div class="d-flex gap-2 w-100 px-2">
+        <label class="my-auto">Search:</label>
+        <kendo-textbox
+          class="w-100"
+          [clearButton]="true"
+          [value]="filterValue"
+          (valueChange)="onValueFilterChange($event)"
+        >
+        </kendo-textbox>
+      </div>
+    </div>
+  </ng-template>
+
+  <kendo-grid-column
+    field="emergencyLevel"
+    [width]="27"
+    [minResizableWidth]="27"
+    [maxResizableWidth]="27"
+    [title]="''"
+  >
+    <ng-template let-dataItem>
+      <div class="position-relative">
+        <div
+          [ngClass]="{
+            'emergency-level-icon': true,
+            'color-emergency-level-low':
+              dataItem.emergencyLevel === emergencyLevel.Small,
+            'color-emergency-level-medium':
+              dataItem.emergencyLevel === emergencyLevel.Medium,
+            'color-emergency-level-high':
+              dataItem.emergencyLevel === emergencyLevel.High,
+            'color-emergency-level-none':
+              dataItem.emergencyLevel === emergencyLevel.None
+          }"
+        ></div>
+        <div *ngIf="dataItem.hasNotesToBeRead" class="notes-to-be-read-icon">
+          !
+        </div>
+      </div>
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column field="id" title="ID" [width]="70"></kendo-grid-column>
+  <kendo-grid-column field="folderStatus" title="Status" [width]="100">
+    <ng-template let-dataItem>
+      {{ dataItem.folderStatus }}
+    </ng-template>
+  </kendo-grid-column>
+  <kendo-grid-column
+    field="legacyId"
+    title="Legacy ID"
+    [width]="100"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="legacyRef"
+    title="Legacy Ref"
+    [width]="120"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="informexNumber"
+    title="Informex #"
+    [width]="120"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="mandataryFullName"
+    title="Company"
+    [width]="150"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="policyNumber"
+    title="Policy #"
+    [width]="120"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="sinisterNumber"
+    title="Sinister #"
+    [width]="120"
+  ></kendo-grid-column>
+
+  <kendo-grid-column field="sinisterDate" title="Sinister Date" [width]="120">
+    <ng-template let-dataItem>
+      {{ dataItem.sinisterDate | date : "dd/MM/yyyy" }}
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column field="missionDate" title="Mission Date" [width]="120">
+    <ng-template let-dataItem>
+      {{ dataItem.missionDate | date : "dd/MM/yyyy" }}
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column field="appointmentDate" title="Appointment" [width]="150">
+    <ng-template let-dataItem>
+      <span [ngClass]="{ 'text-secondary': dataItem.appointmentDate < now }">
+        {{ dataItem.appointmentDate | date : "dd/MM/yyyy - HH:mm" }}
+      </span>
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column
+    field="brokerFullName"
+    title="Broker"
+    [width]="150"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="repairerFullName"
+    title="Repairer"
+    [width]="150"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="aggrievedFullName"
+    title="Aggrieved"
+    [width]="150"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="folderManagerFullName"
+    title="Manager"
+    [width]="150"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    field="vehiclePlateNumber"
+    title="Vehicle Plate"
+    [width]="120"
+  ></kendo-grid-column>
+
+  <kendo-grid-column
+    field="daysSinceLastModification"
+    title="Days Since Modification"
+    [width]="150"
+  >
+    <ng-template let-dataItem>
+      <div
+        [ngClass]="
+          getDaysSinceLastModificationClass(dataItem.daysSinceLastModification)
+        "
+      >
+        {{ dataItem.daysSinceLastModification }}
+        {{ dataItem.daysSinceLastModification > 1 ? "Days" : "Day" }}
+      </div>
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column
+    field="expertiseType"
+    title="Expertise Type"
+    [width]="120"
+  ></kendo-grid-column>
+
+  <kendo-grid-column
+    field="isVehicleImmobilised"
+    title="Immobilised"
+    [width]="100"
+  >
+    <ng-template let-dataItem>
+      <span *ngIf="dataItem.isVehicleImmobilised">⛔</span>
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column field="hasPhotos" title="Photos" [width]="100">
+    <ng-template let-dataItem>
+      <span *ngIf="dataItem.hasPhotos">📷</span>
+    </ng-template>
+  </kendo-grid-column>
+
+  <kendo-grid-column field="fileOutcome" title="Outcome" [width]="120">
+    <ng-template let-dataItem>
+      {{ dataItem.fileOutcome }}
+    </ng-template>
+  </kendo-grid-column>
+</kendo-grid>
+
+<kendo-toolbar *ngIf="showGrid" class="border-top-0">
+  <kendo-toolbar-button
+    [look]="'flat'"
+    [icon]="'file-add'"
+    [text]="'Add'"
+    [disabled]="isLoading"
+  ></kendo-toolbar-button>
+  <kendo-toolbar-button
+    [look]="'flat'"
+    [icon]="'delete'"
+    [text]="'Delete'"
+    [disabled]="!selectedFolderHeader || isLoading"
+  ></kendo-toolbar-button>
+  <kendo-toolbar-button
+    [look]="'flat'"
+    [icon]="'calendar'"
+    [text]="'Schedule'"
+    [disabled]="!selectedFolderHeader || isLoading"
+  ></kendo-toolbar-button>
+  <kendo-toolbar-button
+    [look]="'flat'"
+    [icon]="'photo'"
+    [text]="'Photos'"
+    [disabled]="!selectedFolderHeader || isLoading"
+  ></kendo-toolbar-button>
+</kendo-toolbar>
